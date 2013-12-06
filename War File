@@ -1,0 +1,779 @@
+//Ian Downs
+//CS 110
+//A Game of war with GUI's
+
+
+
+import java.awt.*;
+import java.util.*;
+import java.awt.Color;
+import javax.swing.border.*;
+import javax.swing.*;
+
+public class warGames extends JFrame 
+{
+	/**
+	  This method will create the first ControlPane
+	 */
+
+   //creates our array of cards with ranks & suits
+	private String[] rank = { "ace", "2", "3", "4", "5", "6", "7", "8", "9", "t", "j","q", "k" };
+	private String[] suit = { "s", "h", "d", "c" };
+   //then make a deck array
+	private String[] Deck = new String[52];
+
+//       This is the list of variables we will need for the program
+//********************************************************************************************************//
+
+
+	// GUI variables
+//***************************************************   
+   //create the Jpanel Variables
+	private JPanel jContentPane = null;
+   private JPanel ControlPanel = null;
+   
+   //create the Jlabel Variables
+	private JLabel firstPlayerCard = null;
+	private JLabel secondPlayerCard = null;
+   private JLabel firstPlayerCardsLeft = null;
+	private JLabel secondPlayerCardsLeft = null;
+	private JLabel firstPlayerWarPile = null;
+	private JLabel firstPlayerWarDiscardPile = null;
+	private JLabel secondPlayerWarPile = null;
+	private JLabel secondPlayerWarDiscardPile = null;
+	private JLabel jLabelFirstPlayer = null;
+	private JLabel jLabelSecondPlayer = null;
+	private JLabel firstCardsRemaining = null;
+   private JLabel secondCardsRemaining = null;
+	
+   //create the card pile boarders
+   //this will indictae the discard pile and the in game pile
+   private Border blackline = BorderFactory.createRaisedBevelBorder();
+	private Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+	
+   //create the buttons Play, quit, and newgame
+   private JButton Play = null;
+	private JButton Quit = null;
+	private JButton NewGame = null;
+   
+   //creates a msgbox on the panel
+   private JTextArea messagebox = null;
+   
+   //holds the hands of player 1 and 2
+	private Vector<String> firstPlayer = new Vector<String>();
+	private Vector<String> secondPlayer = new Vector<String>();
+
+   
+   //sets the background to a standard card table green
+	private ImageIcon backgroundImage = new ImageIcon("https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSrHf-8DuQmIgs_dX8G_RjOHVsdeY6r2qQt23zfTXfyfEJNpcbm");
+   
+   
+
+	//these variables keep track of rounds played
+	private int round1 = 0;
+	private int round2 = 0, round3 = 0;
+   
+   
+   
+	/**
+	 Default constructor
+	*/
+	public warGames() 
+   {
+		super();
+		initialize();
+	}
+
+	// this method deals each player 26 cards
+	private void dealDeck() 
+   {
+		int i = 0;
+		
+      while (i < this.Deck.length)
+		{
+         firstPlayer.addElement(this.Deck[i]);
+			secondPlayer.addElement(this.Deck[i + 1]);
+			i += 2;
+		} 
+
+		// this puts the number of cards in the box underneath the players hand
+		firstPlayerCardsLeft.setText(Integer.toString(firstPlayer.size()));
+		secondPlayerCardsLeft.setText(Integer.toString(secondPlayer.size()));
+	}
+
+	// this method takes the suit and rank, then combines them into a full deck
+	private void getCards() 
+   {
+		int index = 0;
+		for (int i = 0; i < this.suit.length; i++)
+       {
+			for (int j = 0; j < this.rank.length; j++) 
+         {
+				this.Deck[index] = this.rank[j] + this.suit[i];
+				index++;
+			}
+		}
+
+	}
+
+	// the pane for the game
+	private JPanel getControlPanel() 
+   {
+		if (this.ControlPanel == null) 
+      {
+			this.ControlPanel = new JPanel();
+			
+			this.ControlPanel.setLayout(new GridBagLayout());
+		}
+		return this.ControlPanel;
+	}
+
+//************************************************
+	//this method is not working a
+   
+   // gets the card image
+	private ImageIcon getImage(String card) 
+   {
+	 //not sure if there should be anything but the Oracle Doc makes it 
+    //look like we just need to insert the file location.
+    	
+    ImageIcon cardImageIcon = new ImageIcon( card + ".jpg");//the stuff in the parenthese seems right but...
+	 
+    return cardImageIcon;
+	}
+   
+//**************************************************   
+
+	/**
+	  This method creates the card table
+ 
+	  
+	 */
+	private JPanel getJContentPane() {
+
+		if (this.jContentPane == null) {
+			
+         // Create the panel's of the card table
+         
+         //Message box which will introduce the user to the game + 
+         //this will tell the winner of the hand
+         this.messagebox = new JTextArea();
+			this.messagebox.setBounds(new Rectangle(240, 380, 355, 80));
+			this.messagebox.setText("Welcome to the Game of War! \n Press the New Game button");
+			messagebox.setBackground(new Color(70, 160, 80));
+         
+         
+         
+         //first player's hand
+			this.jLabelFirstPlayer = new JLabel();
+			this.jLabelFirstPlayer.setBounds(new Rectangle(40, 75, 100, 30));
+			this.jLabelFirstPlayer.setText("First Player's Hand");
+			this.firstPlayerCard = new JLabel();
+			this.firstPlayerCard.setText("First Player");
+			this.firstPlayerCard.setBounds(new Rectangle(50, 100, 73, 97));
+			
+         //player 1 icon pic
+         ImageIcon image = new ImageIcon ("SmallSmileyFace.jpg");  
+         this.firstPlayerCard.setIcon(image);
+			this.firstPlayerCard.setBorder(this.blackline);
+			
+         //this is the pile which will hold the card the first player just put down
+         this.firstPlayerWarPile = new JLabel();
+			this.firstPlayerWarPile.setBounds(new Rectangle(200, 50, 73, 97));	
+			this.firstPlayerWarPile.setBackground(Color.black);
+			
+			
+         
+         //this is the discard pile of the first player
+         this.firstPlayerWarDiscardPile = new JLabel();
+			this.firstPlayerWarDiscardPile.setBounds(new Rectangle(350, 50, 73, 97));
+			
+			
+         this.firstPlayerCardsLeft = new JLabel();
+			this.firstPlayerCardsLeft.setBounds(new Rectangle(60, 200, 50, 20));
+			this.firstPlayerCardsLeft.setText("0");
+			this.firstPlayerCardsLeft.setHorizontalAlignment(SwingConstants.CENTER);
+			
+			this.firstPlayerCardsLeft.setForeground(Color.black);
+			
+         //this will show how many cards the second player has left
+         this.firstCardsRemaining = new JLabel();
+			this.firstCardsRemaining.setBounds(new Rectangle(40, 220, 100, 25));
+			this.firstCardsRemaining.setText("Cards Remaining");
+         
+         //second player's hand
+			this.jLabelSecondPlayer = new JLabel();
+			this.jLabelSecondPlayer.setBounds(new Rectangle(490, 75, 100, 30));
+			this.jLabelSecondPlayer.setText("Second Player's Hand");
+			this.secondPlayerCard = new JLabel();
+			this.secondPlayerCard.setText("Second Player");
+			this.secondPlayerCard.setBounds(new Rectangle(500, 99, 73, 97));
+			
+         ImageIcon image1 = new ImageIcon ("smileFace.png");
+         
+         this.secondPlayerCard.setIcon(image1);
+			this.secondPlayerCard.setBorder(this.blackline);
+			
+         
+         //this is the pile which will hold the card the second player just put down
+         this.secondPlayerWarPile = new JLabel();
+			this.secondPlayerWarPile.setBounds(new Rectangle(200, 150, 73, 97));
+			
+			this.secondPlayerWarPile.setBackground(Color.black);
+			
+			
+         
+         //this is the discard pile of the second player
+         this.secondPlayerWarDiscardPile = new JLabel();
+			this.secondPlayerWarDiscardPile.setBounds(new Rectangle(350, 150, 73, 97));
+			
+			this.secondPlayerWarDiscardPile.setBackground(Color.black);
+			
+			
+         
+         //this will show how many cards the second player has left
+         this.secondCardsRemaining = new JLabel();
+			this.secondCardsRemaining.setBounds(new Rectangle(490, 220, 100, 25));
+			this.secondCardsRemaining.setText("Cards Remaining");
+			
+         
+         //this sets up the "card left" section
+         this.secondPlayerCardsLeft = new JLabel();
+			this.secondPlayerCardsLeft.setBounds(new Rectangle(510, 200, 50, 20));
+			this.secondPlayerCardsLeft.setText("0");
+			this.secondPlayerCardsLeft.setHorizontalAlignment(SwingConstants.CENTER);
+			this.secondPlayerCardsLeft.setForeground(Color.black);
+			
+         //puts everything on the pane 
+         this.jContentPane = new JPanel();
+			this.jContentPane.setLayout(null);
+			this.jContentPane.setBackground(new Color(70, 160, 80));
+			this.jContentPane.add(this.firstPlayerCard);
+			this.jContentPane.add(this.secondPlayerCard);
+			this.jContentPane.add(this.firstPlayerCardsLeft);
+			this.jContentPane.add(this.secondPlayerCardsLeft);
+			this.jContentPane.add(this.firstPlayerWarPile);
+			this.jContentPane.add(this.firstPlayerWarDiscardPile);
+			this.jContentPane.add(this.secondPlayerWarPile);
+			this.jContentPane.add(this.secondPlayerWarDiscardPile);
+			this.jContentPane.add(this.messagebox);
+			this.jContentPane.add(this.jLabelFirstPlayer);
+			this.jContentPane.add(this.jLabelSecondPlayer);
+			this.jContentPane.add(this.firstCardsRemaining);
+			this.jContentPane.add(this.secondCardsRemaining);
+			this.jContentPane.add(getControlPanel());
+         this.jContentPane.add(getPlay(), null);
+			this.jContentPane.add(getQuit(), null);
+			this.jContentPane.add(getNewGame());
+         
+         // //This sets the pictures to variabls
+         //this is commented out as i continuously get a "this is not a statement" error
+         
+//          
+//          //2's
+//          ImageIcon 2c = createImageIcon ("2c.jpg");
+//          ImageIcon 2d = createImageIcon ("2d.jpg");
+//          ImageIcon 2h = createImageIcon ("2h.jpg");
+//          ImageIcon 2s = createImageIcon ("2s.jpg");
+//          
+//          //3's
+//          ImageIcon 3c = createImageIcon ("3c.jpg");
+//          ImageIcon 3d = createImageIcon ("3d.jpg");
+//          ImageIcon 3h = createImageIcon ("3h.jpg");
+//          ImageIcon 3s = createImageIcon ("3s.jpg");
+//          
+//          //4's
+//          ImageIcon 4c = createImageIcon ("4c.jpg");
+//          ImageIcon 4d = createImageIcon ("4d.jpg");
+//          ImageIcon 4h = createImageIcon ("4h.jpg");
+//          ImageIcon 5s = createImageIcon ("4s.jpg");
+//          
+//          //5's
+//          ImageIcon 5c = createImageIcon ("5c.jpg");
+//          ImageIcon 5d = createImageIcon ("5d.jpg");
+//          ImageIcon 5h = createImageIcon ("5h.jpg");
+//          ImageIcon 5s = createImageIcon ("5s.jpg");
+//          
+//          //6's
+//          ImageIcon 6c = createImageIcon ("6c.jpg");
+//          ImageIcon 6d = createImageIcon ("6d.jpg");
+//          ImageIcon 6h = createImageIcon ("6h.jpg");
+//          ImageIcon 6s = createImageIcon ("6s.jpg");
+//          
+//          //7's
+//          ImageIcon 7c = createImageIcon ("7c.jpg");
+//          ImageIcon 7d = createImageIcon ("7d.jpg");
+//          ImageIcon 7h = createImageIcon ("7h.jpg");
+//          ImageIcon 7s = createImageIcon ("7s.jpg");
+//          
+//          //8's
+//          ImageIcon 8c = createImageIcon ("8c.jpg");
+//          ImageIcon 8d = createImageIcon ("8d.jpg");
+//          ImageIcon 8h = createImageIcon ("8h.jpg");
+//          ImageIcon 8s = createImageIcon ("8s.jpg");
+//          
+//          //9's
+//          ImageIcon 9c = createImageIcon ("9c.jpg");
+//          ImageIcon 9d = createImageIcon ("9d.jpg");
+//          ImageIcon 9h = createImageIcon ("9h.jpg");
+//          ImageIcon 9s = createImageIcon ("9s.jpg");
+//          
+//          //10's
+//          ImageIcon tc = createImageIcon ("10c.jpg");
+//          ImageIcon td = createImageIcon ("10d.jpg");
+//          ImageIcon th = createImageIcon ("10h.jpg");
+//          ImageIcon ts = createImageIcon ("10s.jpg");
+//          
+//          //j's
+//          ImageIcon jc = createImageIcon ("jackc.jpg");
+//          ImageIcon jd = createImageIcon ("jackd.jpg");
+//          ImageIcon jh = createImageIcon ("jackh.jpg");
+//          ImageIcon js = createImageIcon ("jacks.jpg");
+//          
+//          //q's
+//          ImageIcon qc = createImageIcon ("queenc.jpg");
+//          ImageIcon qd = createImageIcon ("queend.jpg");
+//          ImageIcon qh = createImageIcon ("queenh.jpg");
+//          ImageIcon qs = createImageIcon ("queens.jpg");
+//          
+//          //k's
+//          ImageIcon kc = createImageIcon ("kingc.jpg");
+//          ImageIcon kd = createImageIcon ("kingd.jpg");
+//          ImageIcon kh = createImageIcon ("kingh.jpg");
+//          ImageIcon ks = createImageIcon ("kings.jpg");
+//          
+//          //a's
+//          ImageIcon ac = createImageIcon ("acec.jpg");
+//          ImageIcon ad = createImageIcon ("aced.jpg");
+//          ImageIcon ah = createImageIcon ("aces.jpg");
+//          ImageIcon as = createImageIcon ("ace.jpg");
+//    
+//          
+         
+		}
+      //returns the created pane
+		return this.jContentPane;
+	}
+
+	
+	/**
+	 This method creates the play button
+	*/
+	private JButton getPlay() 
+   {
+		if (this.Play == null) 
+      {
+			this.Play = new JButton();
+			this.Play.setBounds(new Rectangle(240, 350, 170, 25));
+			this.Play.setText("Play");
+			this.Play.addActionListener(new java.awt.event.ActionListener() 
+         {
+				public void actionPerformed(java.awt.event.ActionEvent e) 
+            {
+
+					// initialize each rounds variables to 0 or null
+					int winner = 0;
+					String message = "";
+					warGames.this.messagebox.setText(message);
+					warGames.this.firstPlayerWarPile.setIcon(null);
+					warGames.this.firstPlayerWarDiscardPile.setIcon(null);
+					warGames.this.secondPlayerWarPile.setIcon(null);
+					warGames.this.secondPlayerWarDiscardPile.setIcon(null);
+
+					// starts a new game
+					if ((warGames.this.firstPlayer.size() == 0)
+							&& (warGames.this.secondPlayer.size() == 0))
+                      {
+						warGames.this.messagebox
+						.setText("Press the Start Button!");
+					       } 
+               else if ((warGames.this.firstPlayer.size() == 0)
+							|| (warGames.this.secondPlayer.size() == 0)) 
+                     {
+
+						//when game is over, this happens
+						
+						message += "\n This war had " + warGames.this.round1
+						+ " rounds.\nFirst Player won "
+						+ warGames.this.round2
+						+ " rounds.\n Second player won "
+						+ warGames.this.round3 + " rounds";
+
+						// keep the text 
+						warGames.this.messagebox.setText(message);
+						if (warGames.this.firstPlayer.size() == 0)
+                   {
+							message += "\n Second Player wins the war!";
+							warGames.this.messagebox.setText(message);
+						} else if (warGames.this.secondPlayer.size() == 0) 
+                  {
+							message += "\n First Player wins the war!";
+							warGames.this.messagebox.setText(message);
+						}
+
+						// remove both players hands after the game is over
+						warGames.this.firstPlayer.removeAllElements();
+						warGames.this.secondPlayer.removeAllElements();
+					}
+
+					// play if players each have cards
+					if ((warGames.this.firstPlayer.size() != 0)
+							&& (warGames.this.secondPlayer.size() != 0)) 
+                     {
+
+						// returns the winner of the war
+
+						winner = war();
+						warGames.this.round1 += 1;
+
+						// if a player runs out of cards then they lose
+						if (winner == 0) 
+                  {
+							if (warGames.this.firstPlayer.size() > warGames.this.secondPlayer
+									.size()) 
+                           {
+
+								// increase number of rounds won by the first player
+								warGames.this.round2 += 1;
+								message = "Second Player has lost this round.";
+								warGames.this.messagebox.setText(message);
+								warGames.this.secondPlayer.removeAllElements();
+
+							} else if (warGames.this.secondPlayer.size() > warGames.this.firstPlayer
+									.size()) {
+
+								// increase number of rounds won by the second player
+								warGames.this.round3 += 1;
+								message = "First Player has lost this round.";
+								warGames.this.messagebox.setText(message);
+								warGames.this.firstPlayer.removeAllElements();
+
+							}
+						} 
+                  else if (winner == 1) 
+                  {
+
+							// increase number of rounds won player 1
+							warGames.this.round2 += 1;
+
+							// this will keep the current message, useful in
+							// cases
+							// of war
+							message = warGames.this.messagebox.getText();
+							message += "First Player wins the round " ;
+							warGames.this.messagebox.setText(message);
+						} 
+                  else if (winner == 2)
+                   {
+
+							// increase number of rounds won by player 2
+							warGames.this.round3 += 1;
+
+							// this will keep the current message
+							message = warGames.this.messagebox.getText();
+							message += "Second Player wins the round ";
+							warGames.this.messagebox.setText(message);
+						}
+
+						// update the count box for player 1
+						warGames.this.firstPlayerCardsLeft.setText(Integer
+								.toString(warGames.this.firstPlayer.size()));
+
+						// if the number of cards is 5 or less, change the color to blue
+						if (warGames.this.firstPlayer.size() <= 5)
+                   {
+							warGames.this.firstPlayerCardsLeft.setForeground(Color.BLUE);
+						 } 
+                  else
+							warGames.this.firstPlayerCardsLeft
+							.setForeground(Color.black);
+
+						// update box showing number of cards remaining for player 2
+						warGames.this.secondPlayerCardsLeft.setText(Integer
+								.toString(warGames.this.secondPlayer.size()));
+
+						// if the number of cards is 5 or less, change the color to red
+						if (warGames.this.secondPlayer.size() <= 5) {
+							warGames.this.secondPlayerCardsLeft.setForeground(Color.RED);
+						} 
+                  else
+							warGames.this.secondPlayerCardsLeft
+							.setForeground(Color.black);
+
+					}
+				}
+			});
+		}
+		return this.Play;
+	}
+   
+   /**
+	  This method creates the new game button
+	 */
+	private JButton getNewGame() 
+   {
+		if (this.NewGame == null) 
+      {
+			this.NewGame = new JButton();
+			this.NewGame.setBounds(new Rectangle(240, 300, 170, 25));
+			this.NewGame.grabFocus();
+			this.NewGame.setText("New Game");
+			this.NewGame.addActionListener(new java.awt.event.ActionListener()
+          {
+				public void actionPerformed(java.awt.event.ActionEvent e) 
+            {
+
+					// initializes variables and players hands for a new game
+					warGames.this.firstPlayer.removeAllElements();
+					warGames.this.secondPlayer.removeAllElements();
+					warGames.this.round1 = 0;
+					warGames.this.round2 = 0;
+					warGames.this.round3 = 0;
+					warGames.this.firstPlayerCardsLeft.setForeground(Color.black);
+					warGames.this.secondPlayerCardsLeft.setForeground(Color.black);
+					String message = "";
+					warGames.this.messagebox.setText(message);
+					warGames.this.firstPlayerCard.setIcon(warGames.this.backgroundImage);
+					warGames.this.firstPlayerWarPile.setIcon(null);
+					warGames.this.firstPlayerWarDiscardPile.setIcon(null);
+					warGames.this.secondPlayerCard.setIcon(warGames.this.backgroundImage);
+					warGames.this.secondPlayerWarPile.setIcon(null);
+					warGames.this.secondPlayerWarDiscardPile.setIcon(null);
+
+					// get the cards into a new deck
+					getCards();
+					// shuffle the deck
+					shuffle();
+					// deal the deck to each player
+					dealDeck();
+				}
+			});
+		}
+		return this.NewGame;
+	}
+
+
+	/**
+    This method creates a quit button
+
+	 */
+	private JButton getQuit() 
+   {
+		if (this.Quit == null) 
+      {
+			this.Quit = new JButton();
+			this.Quit.setBounds(new Rectangle(530, 20, 100, 25));
+			this.Quit.setText("Quit");
+			this.Quit.addActionListener(new java.awt.event.ActionListener() 
+         {
+				public void actionPerformed(java.awt.event.ActionEvent e) 
+            {
+					// closes the program
+					System.gc();
+					System.exit(0);
+				}
+			});
+		}
+		return this.Quit;
+	}
+
+	// initializes the main frame
+	private void initialize() 
+   {
+		setSize(650, 500);
+		setContentPane(getJContentPane());
+		add(getControlPanel());
+		setTitle("war");
+
+	}
+
+	// shuffles the deck
+   //method: swaps random index numbers with each card and performs this 10 times.
+	private void shuffle() 
+   {
+		int tempNumber = 0;
+		String tempString = "";
+		for (int shuffle = 0; shuffle < 10; shuffle++)
+       {
+			for (int x = 0; x < 52; x++) 
+         {
+				tempNumber = (int) Math.floor(Math.random() * 52);
+				tempString = this.Deck[tempNumber];
+				this.Deck[tempNumber] = this.Deck[x];
+				this.Deck[x] = tempString;
+			}
+		
+      }
+      
+	}
+
+	private int war()
+    {
+
+		// variables to determine winner, round of war, cards played, and value
+		int win = 0;
+		int pos = 0;
+		int round = 1;
+		Character ch1 = ' ';
+		Character ch2 = ' ';
+
+		String played1 = "";
+		String played2 = "";
+		int val1 = 0;
+		int val2 = 0;
+
+
+		// this vector holds the cards in case of war
+		Vector<String> table = new Vector<String>();
+
+		do {
+			if ((pos < this.firstPlayer.size()) && (pos < this.secondPlayer.size())) 
+         {
+
+				// this returns the card at the proper position
+				played1 = this.firstPlayer.elementAt(pos);
+				played2 = this.secondPlayer.elementAt(pos);
+
+				if (pos == 0) 
+            {
+					// this  displays the card on the players deck
+					this.firstPlayerCard.setIcon(getImage(played1));
+					this.secondPlayerCard.setIcon(getImage(played2));
+				} 
+            else 
+            {
+					//background
+					
+					firstPlayerWarPile.setIcon(this.backgroundImage);
+					firstPlayerWarDiscardPile.setIcon(getImage(played1));
+					secondPlayerWarPile.setIcon(this.backgroundImage);
+					secondPlayerWarDiscardPile.setIcon(getImage(played2));
+				}
+
+				// returns the first character of the card to get the value
+				ch1 = played1.charAt(0);
+				switch (ch1) 
+            {
+				case 't':
+					val1 = 10;
+					break;
+				case 'j':
+					val1 = 11;
+					break;
+				case 'q':
+					val1 = 12;
+					break;
+				case 'k':
+					val1 = 13;
+					break;
+				case 'a':
+					val1 = 14;
+					break;
+				default:
+					val1 = Integer.parseInt(ch1.toString());
+				}
+            
+
+
+
+				// returns the first character of the card to get the value
+				ch2 = played2.charAt(0);
+				switch (ch2) 
+            {
+				case 't':
+					val2 = 10;
+					break;
+				case 'j':
+					val2 = 11;
+					break;
+				case 'q':
+					val2 = 12;
+					break;
+				case 'k':
+					val2 = 13;
+					break;
+				case 'a':
+					val2 = 14;
+					break;
+				default:
+					val2 = Integer.parseInt(ch2.toString());
+
+				}
+            
+            
+				// if val1 is larger than val2, player 1 wins
+				if (val1 > val2)
+             {
+					win = 1;
+					for (int i = 0; i <= pos; i++) 
+               {
+
+						// add cards to vector and remove from the players hand
+						table.addElement(this.firstPlayer.elementAt(0));
+						table.addElement(this.secondPlayer.elementAt(0));
+						this.firstPlayer.removeElementAt(0);
+						this.secondPlayer.removeElementAt(0);
+					}
+					// add the cards in the table vector to first Player's hand
+					for (int i = 0; i < table.size(); i++) 
+               {
+						this.firstPlayer.addElement(table.elementAt(i));
+					}
+
+				} else if (val2 > val1) 
+            {
+					// if val2 is larger than val1, player 2 wins
+					win = 2;
+					for (int i = 0; i <= pos; i++)
+                {
+						// add cards to vector and remove from the players hand
+						table.addElement(this.secondPlayer.elementAt(0));
+						table.addElement(this.firstPlayer.elementAt(0));
+						this.secondPlayer.removeElementAt(0);
+						this.firstPlayer.removeElementAt(0);
+					}
+					// add the cards in the table vector to firstPlayer's hand
+					for (int i = 0; i < table.size(); i++) 
+               {
+						this.secondPlayer.addElement(table.elementAt(i));
+					}
+
+				} else if (val1 == val2) 
+            {
+
+					// in cases of a draw 
+					
+					this.messagebox.setText("War Delcared! \n");
+					round += 1;
+					pos += 2;
+					win = 0;
+
+				}
+			} else
+				
+           //winner doesn't have enough cards
+				break;
+		} while (win == 0);
+		return win;
+
+	}
+   
+   
+   /**
+	 Main Method
+	*/
+	public static void main(String[] args) 
+   {
+		SwingUtilities.invokeLater(new Runnable() 
+      {
+			public void run() 
+         {
+				warGames thisClass = new warGames();
+				thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				thisClass.setVisible(true);
+			}
+		});
+
+	}
+
+}
