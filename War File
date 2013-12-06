@@ -12,9 +12,7 @@ import javax.swing.*;
 
 public class warGames extends JFrame 
 {
-	/**
-	  This method will create the first ControlPane
-	 */
+
 
    //creates our array of cards with ranks & suits
 	private String[] rank = { "ace", "2", "3", "4", "5", "6", "7", "8", "9", "t", "j","q", "k" };
